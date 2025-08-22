@@ -8,7 +8,7 @@ CREATE TABLE user (
                       id BIGINT PRIMARY KEY AUTO_INCREMENT,
                       username VARCHAR(50) NOT NULL UNIQUE,
                       password VARCHAR(100) NOT NULL,
-                      role ENUM('admin', 'customer') NOT NULL DEFAULT 'customer'
+                      role ENUM('admin.html', 'customer') NOT NULL DEFAULT 'customer'
 ) ENGINE=InnoDB;
 
 -- 图书表
@@ -42,7 +42,7 @@ CREATE TABLE order_item (
 
 -- 插入一些测试数据
 INSERT INTO user (username, password, role) VALUES
-                                                ('admin', '123456', 'admin'),
+                                                ('admin.html', '123456', 'admin.html'),
                                                 ('alice', '123456', 'customer'),
                                                 ('bob', '123456', 'customer');
 
