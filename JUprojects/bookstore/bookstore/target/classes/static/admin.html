@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书店管理系统 - 管理员面板</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --light-bg: #f8f9fc;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
+            z-index: 100;
+            padding-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-brand {
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand i {
+            margin-right: 10px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-item {
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .topbar {
+            margin-bottom: 20px;
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #e3e6f0;
+            padding: 15px 20px;
+            font-weight: 700;
+            color: #4e73df;
+            border-radius: 8px 8px 0 0 !important;
+        }
+
+        .table-responsive {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .table th {
+            border-top: none;
+            font-weight: 700;
+            color: var(--secondary-color);
+            padding: 15px 10px;
+        }
+
+        .table td {
+            padding: 12px 10px;
+            vertical-align: middle;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .badge-admin {
+            background-color: var(--primary-color);
+        }
+
+        .badge-customer {
+            background-color: var(--secondary-color);
+        }
+
+        .user-actions .btn {
+            margin-right: 5px;
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-title {
+            font-weight: 700;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .welcome-text {
+            font-weight: 600;
+            color: #5a5c69;
+        }
+
+        .logout-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #3a5fc8;
+        }
+
+        .stats-card {
+            border-left: 4px solid;
+            border-radius: 8px;
+        }
+
+        .stats-card.admin {
+            border-color: var(--primary-color);
+        }
+
+        .stats-card.customer {
+            border-color: var(--secondary-color);
+        }
+
+        .stats-card.total {
+            border-color: var(--success-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边导航栏 -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-book-open"></i> 书店管理系统
+        </div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link active">
+                    <i class="fas fa-tachometer-alt"></i> 控制面板
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-users"></i> 用户管理
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-book"></i> 图书管理
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-shopping-cart"></i> 订单管理
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i> 数据统计
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="fas fa-cog"></i> 系统设置
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <!-- 顶部导航栏 -->
+        <div class="topbar">
+            <div class="welcome-text">
+                <h4>管理员面板</h4>
+            </div>
+            <div>
+                <span class="me-3">欢迎，管理员</span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </button>
+            </div>
+        </div>
+
+        <!-- 统计信息卡片 -->
+        <div class="row mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card stats-card total h-100">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <div class="text-xs font-weight-bold text-uppercase mb-1">用户总数</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalUsers">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card stats-card admin h-100">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <div class="text-xs font-weight-bold text-uppercase mb-1">管理员数量</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="adminUsers">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-user-shield fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card stats-card customer h-100">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <div class="text-xs font-weight-bold text-uppercase mb-1">顾客数量</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="customerUsers">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-user fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 用户管理卡片 -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>用户管理</span>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> 添加用户
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>用户名</th>
+                            <th>角色</th>
+                            <th>注册时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 用户数据将通过JavaScript动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑用户的模态框 -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">添加用户</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <input type="hidden" id="userId">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">角色</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="role" id="roleAdmin" value="admin">
+                                    <label class="form-check-label" for="roleAdmin">管理员</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="role" id="roleCustomer" value="customer" checked>
+                                    <label class="form-check-label" for="roleCustomer">顾客</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveUser()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认删除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>您确定要删除用户 <span id="deleteUserName" class="fw-bold"></span> 吗？此操作不可逆。</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // 当前选中的用户ID
+        let selectedUserId = null;
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+        });
+
+        // 加载用户列表
+        function loadUsers() {
+            fetch('http://localhost:8080/users')
+                .then(response => response.json())
+                .then(users => {
+                    updateStats(users);
+                    renderUsersTable(users);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('加载用户列表失败');
+                });
+        }
+
+        // 更新统计信息
+        function updateStats(users) {
+            const totalUsers = users.length;
+            const adminUsers = users.filter(user => user.role === 'admin').length;
+            const customerUsers = users.filter(user => user.role === 'customer').length;
+
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('adminUsers').textContent = adminUsers;
+            document.getElementById('customerUsers').textContent = customerUsers;
+        }
+
+        // 渲染用户表格
+        function renderUsersTable(users) {
+            const tbody = document.querySelector('#usersTable tbody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+
+                // 根据角色设置徽章样式
+                const roleBadge = user.role === 'admin' ?
+                    '<span class="badge badge-admin">管理员</span>' :
+                    '<span class="badge badge-customer">顾客</span>';
+
+                tr.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">${user.username.charAt(0).toUpperCase()}</div>
+                            ${user.username}
+                        </div>
+                    </td>
+                    <td>${roleBadge}</td>
+                    <td>${new Date().toLocaleDateString()}</td>
+                    <td class="user-actions">
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openEditModal(${user.id}, '${user.username}', '${user.role}')">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="prepareDelete(${user.id}, '${user.username}')">
+                            <i class="fas fa-trash"></i> 删除
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 打开添加用户模态框
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '添加用户';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('roleCustomer').checked = true;
+        }
+
+        // 打开编辑用户模态框
+        function openEditModal(id, username, role) {
+            document.getElementById('modalTitle').textContent = '编辑用户';
+            document.getElementById('userId').value = id;
+            document.getElementById('username').value = username;
+            document.getElementById('password').required = false;
+
+            if (role === 'admin') {
+                document.getElementById('roleAdmin').checked = true;
+            } else {
+                document.getElementById('roleCustomer').checked = true;
+            }
+        }
+
+        // 保存用户（添加或更新）
+        function saveUser() {
+            const userId = document.getElementById('userId').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.querySelector('input[name="role"]:checked').value;
+
+            if (!username) {
+                alert('请输入用户名');
+                return;
+            }
+
+            if (!userId && !password) {
+                alert('请输入密码');
+                return;
+            }
+
+            const userData = {
+                username: username,
+                password: password,
+                role: role
+            };
+
+            let url = 'http://localhost:8080/users';
+            let method = 'POST';
+
+            // 如果是编辑已有用户
+            if (userId) {
+                userData.id = userId;
+                method = 'PUT';
+            }
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('操作失败');
+                }
+            })
+            .then(() => {
+                // 关闭模态框
+                const modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+                modal.hide();
+
+                // 重新加载用户列表
+                loadUsers();
+
+                alert(userId ? '用户更新成功' : '用户添加成功');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(userId ? '更新用户失败' : '添加用户失败');
+            });
+        }
+
+        // 准备删除用户
+        function prepareDelete(id, username) {
+            selectedUserId = id;
+            document.getElementById('deleteUserName').textContent = username;
+        }
+
+        // 确认删除用户
+        function confirmDelete() {
+            if (!selectedUserId) return;
+
+            fetch(`http://localhost:8080/users/${selectedUserId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                    modal.hide();
+
+                    // 重新加载用户列表
+                    loadUsers();
+
+                    alert('用户删除成功');
+                } else {
+                    throw new Error('删除失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('删除用户失败');
+            });
+        }
+
+        // 退出登录
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
