@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* 保持原有的CSS样式不变 */
         :root {
             --primary-color: #4e73df;
             --secondary-color: #858796;
@@ -35,241 +36,92 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
 
-        .sidebar-brand {
-            padding: 15px 20px;
-            font-size: 1.2rem;
-            color: white;
-            text-align: center;
-            margin-bottom: 20px;
+        /* 其他样式保持不变... */
+
+        /* 新增图书管理相关样式 */
+        .section {
+            display: none;
         }
 
-        .sidebar-brand i {
-            margin-right: 10px;
-        }
-
-        .sidebar-nav {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar-item {
-            position: relative;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-link {
+        .section.active {
             display: block;
-            padding: 12px 20px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.3s;
         }
 
-        .sidebar-link:hover, .sidebar-link.active {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.1);
+        .stats-card.books {
+            border-color: var(--info-color);
         }
 
-        .sidebar-link i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
+        .stats-card.orders {
+            border-color: var(--warning-color);
         }
 
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-        }
-
-        .topbar {
-            margin-bottom: 20px;
-            background: white;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            padding: 15px 20px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            background: white;
-            border-bottom: 1px solid #e3e6f0;
-            padding: 15px 20px;
-            font-weight: 700;
-            color: #4e73df;
-            border-radius: 8px 8px 0 0 !important;
-        }
-
-        .table-responsive {
-            border-radius: 0 0 8px 8px;
-        }
-
-        .table th {
-            border-top: none;
-            font-weight: 700;
-            color: var(--secondary-color);
-            padding: 15px 10px;
-        }
-
-        .table td {
-            padding: 12px 10px;
-            vertical-align: middle;
-        }
-
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .badge-admin {
-            background-color: var(--primary-color);
-        }
-
-        .badge-customer {
-            background-color: var(--secondary-color);
-        }
-
-        .user-actions .btn {
-            margin-right: 5px;
-        }
-
-        .modal-content {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            background: var(--primary-color);
-            color: white;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .modal-title {
-            font-weight: 700;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
             font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .welcome-text {
-            font-weight: 600;
-            color: #5a5c69;
-        }
-
-        .logout-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: #3a5fc8;
-        }
-
-        .stats-card {
-            border-left: 4px solid;
-            border-radius: 8px;
-        }
-
-        .stats-card.admin {
-            border-color: var(--primary-color);
-        }
-
-        .stats-card.customer {
-            border-color: var(--secondary-color);
-        }
-
-        .stats-card.total {
-            border-color: var(--success-color);
+            border-bottom: 3px solid var(--primary-color);
         }
     </style>
 </head>
 <body>
-    <!-- 侧边导航栏 -->
-    <div class="sidebar">
-        <div class="sidebar-brand">
-            <i class="fas fa-book-open"></i> 书店管理系统
+<!-- 侧边导航栏 -->
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <i class="fas fa-book-open"></i> 书店管理系统
+    </div>
+    <ul class="sidebar-nav">
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link active" data-section="dashboard">
+                <i class="fas fa-tachometer-alt"></i> 控制面板
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link" data-section="user-management">
+                <i class="fas fa-users"></i> 用户管理
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link" data-section="book-management">
+                <i class="fas fa-book"></i> 图书管理
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link" data-section="order-management">
+                <i class="fas fa-shopping-cart"></i> 订单管理
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-chart-bar"></i> 数据统计
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-cog"></i> 系统设置
+            </a>
+        </li>
+    </ul>
+</div>
+
+<!-- 主内容区域 -->
+<div class="main-content">
+    <!-- 顶部导航栏 -->
+    <div class="topbar">
+        <div class="welcome-text">
+            <h4>管理员面板</h4>
         </div>
-        <ul class="sidebar-nav">
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link active">
-                    <i class="fas fa-tachometer-alt"></i> 控制面板
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <i class="fas fa-users"></i> 用户管理
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <i class="fas fa-book"></i> 图书管理
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <i class="fas fa-shopping-cart"></i> 订单管理
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <i class="fas fa-chart-bar"></i> 数据统计
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <i class="fas fa-cog"></i> 系统设置
-                </a>
-            </li>
-        </ul>
+        <div>
+            <span class="me-3">欢迎，管理员</span>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
     </div>
 
-    <!-- 主内容区域 -->
-    <div class="main-content">
-        <!-- 顶部导航栏 -->
-        <div class="topbar">
-            <div class="welcome-text">
-                <h4>管理员面板</h4>
-            </div>
-            <div>
-                <span class="me-3">欢迎，管理员</span>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> 退出
-                </button>
-            </div>
-        </div>
-
+    <!-- 控制面板部分 -->
+    <div id="dashboard-section" class="section active">
         <!-- 统计信息卡片 -->
         <div class="row mb-4">
-            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card stats-card total h-100">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -284,7 +136,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card stats-card admin h-100">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -299,7 +151,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card stats-card customer h-100">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -314,8 +166,68 @@
                     </div>
                 </div>
             </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stats-card books h-100">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <div class="text-xs font-weight-bold text-uppercase mb-1">图书总数</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalBooks">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-book fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <!-- 最近活动面板 -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">最近添加的图书</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="recentBooksTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>书名</th>
+                                    <th>作者</th>
+                                    <th>价格</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- 动态填充 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">系统概览</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="管理仪表板">
+                        </div>
+                        <p>欢迎使用书店管理系统！您可以在这里管理用户、图书和订单。</p>
+                        <a target="_blank" rel="nofollow" href="#">查看详细统计 &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户管理部分 -->
+    <div id="user-management-section" class="section">
         <!-- 用户管理卡片 -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -327,135 +239,357 @@
             <div class="table-responsive">
                 <table class="table table-hover" id="usersTable">
                     <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>用户名</th>
-                            <th>角色</th>
-                            <th>注册时间</th>
-                            <th>操作</th>
-                        </tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>角色</th>
+                        <th>操作</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <!-- 用户数据将通过JavaScript动态填充 -->
+                    <!-- 用户数据将通过JavaScript动态填充 -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- 添加/编辑用户的模态框 -->
-    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">添加用户</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="userForm">
-                        <input type="hidden" id="userId">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">用户名</label>
-                            <input type="text" class="form-control" id="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">密码</label>
-                            <input type="password" class="form-control" id="password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">角色</label>
-                            <div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="role" id="roleAdmin" value="admin">
-                                    <label class="form-check-label" for="roleAdmin">管理员</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="role" id="roleCustomer" value="customer" checked>
-                                    <label class="form-check-label" for="roleCustomer">顾客</label>
-                                </div>
+    <!-- 图书管理部分 -->
+    <div id="book-management-section" class="section">
+        <!-- 图书管理卡片 -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>图书管理</span>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bookModal" onclick="openAddBookModal()">
+                    <i class="fas fa-plus"></i> 添加图书
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover" id="booksTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>书名</th>
+                        <th>作者</th>
+                        <th>价格</th>
+                        <th>库存</th>
+                        <th>分类</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 图书数据将通过JavaScript动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单管理部分 -->
+    <div id="order-management-section" class="section">
+        <!-- 订单管理卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <span>订单管理</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover" id="ordersTable">
+                    <thead>
+                    <tr>
+                        <th>订单ID</th>
+                        <th>用户</th>
+                        <th>订单日期</th>
+                        <th>总金额</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 订单数据将通过JavaScript动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 添加/编辑用户的模态框 -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">添加用户</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用户名</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">角色</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="role" id="roleAdmin" value="admin">
+                                <label class="form-check-label" for="roleAdmin">管理员</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="role" id="roleCustomer" value="customer" checked>
+                                <label class="form-check-label" for="roleCustomer">顾客</label>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" onclick="saveUser()">保存</button>
-                </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveUser()">保存</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- 删除确认模态框 -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">确认删除</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>您确定要删除用户 <span id="deleteUserName" class="fw-bold"></span> 吗？此操作不可逆。</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">确认删除</button>
-                </div>
+<!-- 添加/编辑图书的模态框 -->
+<div class="modal fade" id="bookModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookModalTitle">添加图书</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="bookForm">
+                    <input type="hidden" id="bookId">
+                    <div class="mb-3">
+                        <label for="bookTitle" class="form-label">书名</label>
+                        <input type="text" class="form-control" id="bookTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookAuthor" class="form-label">作者</label>
+                        <input type="text" class="form-control" id="bookAuthor" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookPrice" class="form-label">价格</label>
+                        <input type="number" step="0.01" class="form-control" id="bookPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookStock" class="form-label">库存</label>
+                        <input type="number" class="form-control" id="bookStock" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookCategory" class="form-label">分类</label>
+                        <input type="text" class="form-control" id="bookCategory">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveBook()">保存</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap & jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 删除确认模态框 -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">确认删除</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>您确定要删除用户 <span id="deleteUserName" class="fw-bold"></span> 吗？此操作不可逆。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <script>
-        // 当前选中的用户ID
-        let selectedUserId = null;
+<!-- 删除图书确认模态框 -->
+<div class="modal fade" id="deleteBookModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">确认删除</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>您确定要删除图书 <span id="deleteBookTitle" class="fw-bold"></span> 吗？此操作不可逆。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteBook()">确认删除</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-        // 页面加载完成后执行
-        document.addEventListener('DOMContentLoaded', function() {
-            loadUsers();
+<!-- Bootstrap & jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // 当前选中的用户ID和图书ID
+    let selectedUserId = null;
+    let selectedBookId = null;
+
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+        // 初始化页面
+        initPage();
+
+        // 为侧边栏链接添加点击事件
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                // 移除所有激活状态
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                // 激活当前点击的链接
+                this.classList.add('active');
+                // 获取data-section属性，并显示对应的部分
+                const section = this.getAttribute('data-section');
+                showSection(section);
+            });
+        });
+    });
+
+    // 初始化页面
+    function initPage() {
+        loadUsers();
+        loadBooks();
+        loadOrders();
+        updateDashboardStats();
+    }
+
+    // 显示指定部分
+    function showSection(sectionId) {
+        // 隐藏所有部分
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
         });
 
-        // 加载用户列表
-        function loadUsers() {
-            fetch('http://localhost:8080/users')
-                .then(response => response.json())
-                .then(users => {
-                    updateStats(users);
-                    renderUsersTable(users);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('加载用户列表失败');
+        // 显示选中的部分
+        document.getElementById(sectionId + '-section').classList.add('active');
+
+        // 如果需要，刷新该部分的数据
+        if (sectionId === 'user-management') {
+            loadUsers();
+        } else if (sectionId === 'book-management') {
+            loadBooks();
+        } else if (sectionId === 'order-management') {
+            loadOrders();
+        } else if (sectionId === 'dashboard') {
+            updateDashboardStats();
+        }
+    }
+
+    // 更新仪表板统计信息
+    function updateDashboardStats() {
+        // 获取用户数据并更新统计
+        fetch('http://localhost:8080/users')
+            .then(response => response.json())
+            .then(users => {
+                const totalUsers = users.length;
+                const adminUsers = users.filter(user => user.role === 'admin').length;
+                const customerUsers = users.filter(user => user.role === 'customer').length;
+
+                document.getElementById('totalUsers').textContent = totalUsers;
+                document.getElementById('adminUsers').textContent = adminUsers;
+                document.getElementById('customerUsers').textContent = customerUsers;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        // 获取图书数据并更新统计
+        fetch('http://localhost:8080/api/books')
+            .then(response => response.json())
+            .then(books => {
+                document.getElementById('totalBooks').textContent = books.length;
+
+                // 更新最近图书表格
+                const recentBooksTable = document.querySelector('#recentBooksTable tbody');
+                recentBooksTable.innerHTML = '';
+
+                // 显示最近5本图书
+                const recentBooks = books.slice(-5);
+                recentBooks.forEach(book => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                            <td>${book.title}</td>
+                            <td>${book.author}</td>
+                            <td>¥${book.price.toFixed(2)}</td>
+                        `;
+                    recentBooksTable.appendChild(tr);
                 });
-        }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
 
-        // 更新统计信息
-        function updateStats(users) {
-            const totalUsers = users.length;
-            const adminUsers = users.filter(user => user.role === 'admin').length;
-            const customerUsers = users.filter(user => user.role === 'customer').length;
+    // 加载用户列表
+    function loadUsers() {
+        fetch('http://localhost:8080/users')
+            .then(response => response.json())
+            .then(users => {
+                renderUsersTable(users);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('加载用户列表失败');
+            });
+    }
 
-            document.getElementById('totalUsers').textContent = totalUsers;
-            document.getElementById('adminUsers').textContent = adminUsers;
-            document.getElementById('customerUsers').textContent = customerUsers;
-        }
+    // 加载图书列表
+    function loadBooks() {
+        fetch('http://localhost:8080/api/books')
+            .then(response => response.json())
+            .then(books => {
+                renderBooksTable(books);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('加载图书列表失败');
+            });
+    }
 
-        // 渲染用户表格
-        function renderUsersTable(users) {
-            const tbody = document.querySelector('#usersTable tbody');
-            tbody.innerHTML = '';
+    // 加载订单列表
+    function loadOrders() {
+        fetch('http://localhost:8080/api/orders')
+            .then(response => response.json())
+            .then(orders => {
+                renderOrdersTable(orders);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('加载订单列表失败');
+            });
+    }
 
-            users.forEach(user => {
-                const tr = document.createElement('tr');
+    // 渲染用户表格
+    function renderUsersTable(users) {
+        const tbody = document.querySelector('#usersTable tbody');
+        tbody.innerHTML = '';
 
-                // 根据角色设置徽章样式
-                const roleBadge = user.role === 'admin' ?
-                    '<span class="badge badge-admin">管理员</span>' :
-                    '<span class="badge badge-customer">顾客</span>';
+        users.forEach(user => {
+            const tr = document.createElement('tr');
 
-                tr.innerHTML = `
+            // 根据角色设置徽章样式
+            const roleBadge = user.role === 'admin' ?
+                '<span class="badge bg-primary">管理员</span>' :
+                '<span class="badge bg-secondary">顾客</span>';
+
+            tr.innerHTML = `
                     <td>${user.id}</td>
                     <td>
                         <div class="user-info">
@@ -464,7 +598,6 @@
                         </div>
                     </td>
                     <td>${roleBadge}</td>
-                    <td>${new Date().toLocaleDateString()}</td>
                     <td class="user-actions">
                         <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openEditModal(${user.id}, '${user.username}', '${user.role}')">
                             <i class="fas fa-edit"></i> 编辑
@@ -475,71 +608,155 @@
                     </td>
                 `;
 
-                tbody.appendChild(tr);
-            });
-        }
+            tbody.appendChild(tr);
+        });
+    }
 
-        // 打开添加用户模态框
-        function openAddModal() {
-            document.getElementById('modalTitle').textContent = '添加用户';
-            document.getElementById('userForm').reset();
-            document.getElementById('userId').value = '';
+    // 渲染图书表格
+    function renderBooksTable(books) {
+        const tbody = document.querySelector('#booksTable tbody');
+        tbody.innerHTML = '';
+
+        books.forEach(book => {
+            const tr = document.createElement('tr');
+
+            // 根据库存设置样式
+            const stockClass = book.stock > 10 ? 'text-success' : (book.stock > 0 ? 'text-warning' : 'text-danger');
+            const stockText = book.stock > 10 ? '充足' : (book.stock > 0 ? '紧张' : '缺货');
+
+            tr.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td>¥${book.price.toFixed(2)}</td>
+                    <td class="${stockClass}">${book.stock} <small>(${stockText})</small></td>
+                    <td>${book.category || '未分类'}</td>
+                    <td class="user-actions">
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#bookModal" onclick="openEditBookModal(${book.id})">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteBookModal" onclick="prepareDeleteBook(${book.id}, '${book.title.replace(/'/g, "\\'")}')">
+                            <i class="fas fa-trash"></i> 删除
+                        </button>
+                    </td>
+                `;
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 渲染订单表格
+    function renderOrdersTable(orders) {
+        const tbody = document.querySelector('#ordersTable tbody');
+        tbody.innerHTML = '';
+
+        orders.forEach(order => {
+            const tr = document.createElement('tr');
+            const orderDate = new Date(order.orderDate).toLocaleDateString();
+
+            tr.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.user ? order.user.username : '未知用户'}</td>
+                    <td>${orderDate}</td>
+                    <td>¥${order.totalPrice.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="viewOrderDetails(${order.id})">
+                            <i class="fas fa-eye"></i> 查看详情
+                        </button>
+                    </td>
+                `;
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 打开添加用户模态框
+    function openAddModal() {
+        document.getElementById('modalTitle').textContent = '添加用户';
+        document.getElementById('userForm').reset();
+        document.getElementById('userId').value = '';
+        document.getElementById('roleCustomer').checked = true;
+    }
+
+    // 打开编辑用户模态框
+    function openEditModal(id, username, role) {
+        document.getElementById('modalTitle').textContent = '编辑用户';
+        document.getElementById('userId').value = id;
+        document.getElementById('username').value = username;
+        document.getElementById('password').required = false;
+
+        if (role === 'admin') {
+            document.getElementById('roleAdmin').checked = true;
+        } else {
             document.getElementById('roleCustomer').checked = true;
         }
+    }
 
-        // 打开编辑用户模态框
-        function openEditModal(id, username, role) {
-            document.getElementById('modalTitle').textContent = '编辑用户';
-            document.getElementById('userId').value = id;
-            document.getElementById('username').value = username;
-            document.getElementById('password').required = false;
+    // 打开添加图书模态框
+    function openAddBookModal() {
+        document.getElementById('bookModalTitle').textContent = '添加图书';
+        document.getElementById('bookForm').reset();
+        document.getElementById('bookId').value = '';
+    }
 
-            if (role === 'admin') {
-                document.getElementById('roleAdmin').checked = true;
-            } else {
-                document.getElementById('roleCustomer').checked = true;
-            }
+    // 打开编辑图书模态框
+    function openEditBookModal(bookId) {
+        fetch(`http://localhost:8080/api/books/${bookId}`)
+            .then(response => response.json())
+            .then(book => {
+                document.getElementById('bookModalTitle').textContent = '编辑图书';
+                document.getElementById('bookId').value = book.id;
+                document.getElementById('bookTitle').value = book.title;
+                document.getElementById('bookAuthor').value = book.author;
+                document.getElementById('bookPrice').value = book.price;
+                document.getElementById('bookStock').value = book.stock;
+                document.getElementById('bookCategory').value = book.category || '';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('加载图书信息失败');
+            });
+    }
+
+    // 保存用户（添加或更新）
+    function saveUser() {
+        const userId = document.getElementById('userId').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const role = document.querySelector('input[name="role"]:checked').value;
+
+        if (!username) {
+            alert('请输入用户名');
+            return;
         }
 
-        // 保存用户（添加或更新）
-        function saveUser() {
-            const userId = document.getElementById('userId').value;
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const role = document.querySelector('input[name="role"]:checked').value;
+        if (!userId && !password) {
+            alert('请输入密码');
+            return;
+        }
 
-            if (!username) {
-                alert('请输入用户名');
-                return;
-            }
+        const userData = {
+            username: username,
+            password: password,
+            role: role
+        };
 
-            if (!userId && !password) {
-                alert('请输入密码');
-                return;
-            }
+        let url = 'http://localhost:8080/users';
+        let method = 'POST';
 
-            const userData = {
-                username: username,
-                password: password,
-                role: role
-            };
+        // 如果是编辑已有用户
+        if (userId) {
+            userData.id = userId;
+            method = 'PUT';
+        }
 
-            let url = 'http://localhost:8080/users';
-            let method = 'POST';
-
-            // 如果是编辑已有用户
-            if (userId) {
-                userData.id = userId;
-                method = 'PUT';
-            }
-
-            fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            })
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
             .then(response => {
                 if (response.ok) {
                     return response.json();
@@ -561,21 +778,91 @@
                 console.error('Error:', error);
                 alert(userId ? '更新用户失败' : '添加用户失败');
             });
+    }
+
+    // 保存图书（添加或更新）
+    function saveBook() {
+        const bookId = document.getElementById('bookId').value;
+        const title = document.getElementById('bookTitle').value;
+        const author = document.getElementById('bookAuthor').value;
+        const price = parseFloat(document.getElementById('bookPrice').value);
+        const stock = parseInt(document.getElementById('bookStock').value);
+        const category = document.getElementById('bookCategory').value;
+
+        if (!title || !author || isNaN(price) || isNaN(stock)) {
+            alert('请填写所有必填字段');
+            return;
         }
 
-        // 准备删除用户
-        function prepareDelete(id, username) {
-            selectedUserId = id;
-            document.getElementById('deleteUserName').textContent = username;
+        const bookData = {
+            title: title,
+            author: author,
+            price: price,
+            stock: stock,
+            category: category
+        };
+
+        let url = 'http://localhost:8080/api/books';
+        let method = 'POST';
+
+        // 如果是编辑已有图书
+        if (bookId) {
+            bookData.id = bookId;
+            method = 'PUT';
+            url = `http://localhost:8080/api/books/${bookId}`;
         }
 
-        // 确认删除用户
-        function confirmDelete() {
-            if (!selectedUserId) return;
-
-            fetch(`http://localhost:8080/users/${selectedUserId}`, {
-                method: 'DELETE'
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('操作失败');
+                }
             })
+            .then(() => {
+                // 关闭模态框
+                const modal = bootstrap.Modal.getInstance(document.getElementById('bookModal'));
+                modal.hide();
+
+                // 重新加载图书列表
+                loadBooks();
+                // 更新仪表板统计
+                updateDashboardStats();
+
+                alert(bookId ? '图书更新成功' : '图书添加成功');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(bookId ? '更新图书失败' : '添加图书失败');
+            });
+    }
+
+    // 准备删除用户
+    function prepareDelete(id, username) {
+        selectedUserId = id;
+        document.getElementById('deleteUserName').textContent = username;
+    }
+
+    // 准备删除图书
+    function prepareDeleteBook(id, title) {
+        selectedBookId = id;
+        document.getElementById('deleteBookTitle').textContent = title;
+    }
+
+    // 确认删除用户
+    function confirmDelete() {
+        if (!selectedUserId) return;
+
+        fetch(`http://localhost:8080/users/${selectedUserId}`, {
+            method: 'DELETE'
+        })
             .then(response => {
                 if (response.ok) {
                     // 关闭模态框
@@ -584,6 +871,8 @@
 
                     // 重新加载用户列表
                     loadUsers();
+                    // 更新仪表板统计
+                    updateDashboardStats();
 
                     alert('用户删除成功');
                 } else {
@@ -594,13 +883,48 @@
                 console.error('Error:', error);
                 alert('删除用户失败');
             });
-        }
+    }
 
-        // 退出登录
-        function logout() {
-            sessionStorage.removeItem('currentUser');
-            window.location.href = 'login.html';
-        }
-    </script>
+    // 确认删除图书
+    function confirmDeleteBook() {
+        if (!selectedBookId) return;
+
+        fetch(`http://localhost:8080/api/books/${selectedBookId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('deleteBookModal'));
+                    modal.hide();
+
+                    // 重新加载图书列表
+                    loadBooks();
+                    // 更新仪表板统计
+                    updateDashboardStats();
+
+                    alert('图书删除成功');
+                } else {
+                    throw new Error('删除失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('删除图书失败');
+            });
+    }
+
+    // 查看订单详情
+    function viewOrderDetails(orderId) {
+        alert('查看订单详情: ' + orderId);
+        // 这里可以跳转到订单详情页面或打开详情模态框
+    }
+
+    // 退出登录
+    function logout() {
+        sessionStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
+    }
+</script>
 </body>
 </html>
