@@ -1,17 +1,12 @@
 package com.example.bookstore.service;
 
-import com.example.bookstore.entity.Book;
-import com.example.bookstore.entity.Order;
-import com.example.bookstore.entity.OrderItem;
-import com.example.bookstore.entity.User;
-import com.example.bookstore.repository.BookRepository;
-import com.example.bookstore.repository.OrderItemRepository;
-import com.example.bookstore.repository.OrderRepository;
-import com.example.bookstore.repository.UserRepository;
+import com.example.bookstore.entity.*;
+import com.example.bookstore.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,12 +36,7 @@ public class OrderService {
     }
 
     /**
-     * 创建订单 - 包含完整的业务逻辑
-     * 1. 验证用户存在
-     * 2. 验证每个订单项的图书存在且有足够库存
-     * 3. 计算订单总价
-     * 4. 减少图书库存
-     * 5. 保存订单和订单项
+     * 创建订单 - 重新设计流程
      */
     @Transactional
     public Order createOrder(Order order) {
@@ -54,12 +44,32 @@ public class OrderService {
         User user = userRepository.findById(order.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在，ID: " + order.getUser().getId()));
 
-        // 设置订单基本信息
-        order.setUser(user);
-        order.setOrderDate(LocalDateTime.now());
-        order.setTotalPrice(0.0);
+        // 2. 创建新订单对象，避免使用传入的order（可能有问题）
+        Order newOrder = new Order();
+        newOrder.setUser(user);
+        newOrder.setOrderDate(LocalDateTime.now());
+        newOrder.setTotalPrice(0.0);
+        newOrder.setStatus(Order.OrderStatus.pending);
+        newOrder.setPaymentStatus(Order.PaymentStatus.pending);
 
-        // 2. 处理每个订单项
+        // 设置收货信息和支付方式
+        newOrder.setShippingAddress(order.getShippingAddress() != null ? order.getShippingAddress() : "");
+        newOrder.setRecipientName(order.getRecipientName() != null ? order.getRecipientName() : "");
+        newOrder.setRecipientPhone(order.getRecipientPhone() != null ? order.getRecipientPhone() : "");
+        newOrder.setPaymentMethod(order.getPaymentMethod() != null ? order.getPaymentMethod() : Order.PaymentMethod.cash);
+
+        // 3. 先保存订单（生成ID）
+        Order savedOrder = orderRepository.save(newOrder);
+
+        // 确保订单ID已经生成
+        if (savedOrder.getId() == null) {
+            throw new IllegalStateException("订单ID生成失败");
+        }
+
+        // 4. 处理每个订单项
+        List<OrderItem> savedOrderItems = new ArrayList<>();
+        double totalPrice = 0.0;
+
         for (OrderItem item : order.getOrderItems()) {
             // 验证图书存在
             Book book = bookRepository.findById(item.getBook().getId())
@@ -72,26 +82,31 @@ public class OrderService {
                         "，请求数量: " + item.getQuantity());
             }
 
-            // 设置订单项信息
-            item.setOrder(order);
-            item.setBook(book);
+            // 创建新的订单项并设置关联
+            OrderItem newItem = new OrderItem();
+            newItem.setOrder(savedOrder);  // 使用已保存的订单
+            newItem.setBook(book);
+            newItem.setQuantity(item.getQuantity());
+            newItem.setUnitPrice(book.getPrice());
+            newItem.setSubtotal(book.getPrice() * item.getQuantity());
 
             // 计算该项小计并累加到订单总价
             double itemTotal = book.getPrice() * item.getQuantity();
-            order.setTotalPrice(order.getTotalPrice() + itemTotal);
+            totalPrice += itemTotal;
 
             // 减少图书库存
             book.setStock(book.getStock() - item.getQuantity());
             bookRepository.save(book);
 
             // 保存订单项
-            orderItemRepository.save(item);
+            OrderItem savedItem = orderItemRepository.save(newItem);
+            savedOrderItems.add(savedItem);
         }
 
-        // 3. 保存订单
-        Order savedOrder = orderRepository.save(order);
-
-        return savedOrder;
+        // 5. 设置订单总价，更新订单
+        savedOrder.setTotalPrice(totalPrice);
+        savedOrder.setOrderItems(savedOrderItems);
+        return orderRepository.save(savedOrder);
     }
 
     public Order saveOrder(Order order) {

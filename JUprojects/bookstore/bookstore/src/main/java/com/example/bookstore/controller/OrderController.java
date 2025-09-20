@@ -34,11 +34,19 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody Order order) {
         try {
+            // 添加日志记录
+            System.out.println("收到订单创建请求: " + order);
+
             Order savedOrder = orderService.createOrder(order);
             return ResponseEntity.ok(savedOrder);
         } catch (IllegalArgumentException e) {
+            // 添加错误日志
+            System.err.println("创建订单失败: " + e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
+            // 添加错误日志
+            System.err.println("创建订单时发生错误: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("创建订单时发生错误: " + e.getMessage());
         }
     }

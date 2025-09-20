@@ -13,13 +13,16 @@ public class OrderItem {
     private Long id;
 
     private Integer quantity;
+    private Double unitPrice;
+    private Double subtotal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    @JsonIgnore //
+    // 修改为使用 EAGER 加载，避免延迟加载问题
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id", nullable = false)
+    @JsonIgnore
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id")
     private Book book;
 }

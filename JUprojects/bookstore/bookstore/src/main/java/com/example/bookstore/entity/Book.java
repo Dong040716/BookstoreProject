@@ -2,20 +2,34 @@ package com.example.bookstore.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 
-// @Entity 表示这是一个 JPA 实体类（对应数据库中的一张表）
-// 类名默认映射为表名（Book -> book）
 @Entity
 @Table(name = "book")
 @Data
 public class Book {
-    @Id  // 主键
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // 自增主键
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title; // 书名
-    private String author;// 作者
-    private Double price; // 价格
-    private Integer stock;// 库存数量
-    private String category;// 目录
+    private String title;
+    private String author;
+    private Double price;
+    private Integer stock;
+    private String category;
+    private String description;
+    private String imageUrl;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
