@@ -113,6 +113,11 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    // 在OrderService类中添加这个方法
+    public List<Order> getOrdersByUserId(Long userId) {
+        return orderRepository.findByUserId(userId);
+    }
+
     public void deleteOrder(Long id) {
         // 先删除关联的订单项
         Order order = orderRepository.findById(id)

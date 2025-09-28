@@ -12,18 +12,27 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
+
     private final OrderService orderService;
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
+    /**
+     * 查询所有订单
+     * GET /api/orders
+     */
     @GetMapping
     public ResponseEntity<List<Order>> listOrders() {
         List<Order> orders = orderService.getAllOrders();
         return ResponseEntity.ok(orders);
     }
 
+    /**
+     * 根据 ID 查询订单
+     * GET /api/orders/{id}
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrder(@PathVariable Long id) {
         Optional<Order> orderOpt = orderService.getOrderById(id);
@@ -31,26 +40,26 @@ public class OrderController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * 创建新订单
+     * POST /api/orders
+     */
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody Order order) {
         try {
-            // 添加日志记录
-            System.out.println("收到订单创建请求: " + order);
-
             Order savedOrder = orderService.createOrder(order);
             return ResponseEntity.ok(savedOrder);
         } catch (IllegalArgumentException e) {
-            // 添加错误日志
-            System.err.println("创建订单失败: " + e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            // 添加错误日志
-            System.err.println("创建订单时发生错误: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("创建订单时发生错误: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("创建订单失败: " + e.getMessage());
         }
     }
 
+    /**
+     * 更新订单
+     * PUT /api/orders/{id}
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order) {
         if (!orderService.getOrderById(id).isPresent()) {
@@ -61,6 +70,10 @@ public class OrderController {
         return ResponseEntity.ok(updatedOrder);
     }
 
+    /**
+     * 删除订单
+     * DELETE /api/orders/{id}
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         if (!orderService.getOrderById(id).isPresent()) {
@@ -68,5 +81,17 @@ public class OrderController {
         }
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 根据用户ID查询订单
+     * GET /api/orders/user/{userId}
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Order>> getOrdersByUser(@PathVariable Long userId) {
+        // 这里需要实现根据用户ID查询订单的逻辑
+        // 您需要在OrderService中添加相应的方法
+        List<Order> orders = orderService.getOrdersByUserId(userId);
+        return ResponseEntity.ok(orders);
     }
 }

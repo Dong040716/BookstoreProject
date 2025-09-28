@@ -79,6 +79,18 @@ INSERT INTO book (title, author, price, stock, category, description) VALUES
                                                                           ('算法导论', 'Thomas H. Cormen', 128.00, 3, '计算机科学', '算法领域的权威教材，涵盖各种算法设计与分析'),
                                                                           ('Effective Java', 'Joshua Bloch', 79.00, 7, '编程', 'Java编程最佳实践，提高Java编程水平的必备书籍');
 
+-- 更新订单表结构，添加新字段
+ALTER TABLE `order`
+    ADD COLUMN status VARCHAR(20) DEFAULT 'pending',
+    ADD COLUMN shipping_address TEXT,
+    ADD COLUMN recipient_name VARCHAR(100),
+    ADD COLUMN recipient_phone VARCHAR(20),
+    ADD COLUMN payment_method VARCHAR(20),
+    ADD COLUMN payment_status VARCHAR(20) DEFAULT 'pending',
+    ADD COLUMN payment_date DATETIME,
+    ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 -- 创建索引以提高查询性能
 CREATE INDEX idx_user_username ON user(username);
 CREATE INDEX idx_user_email ON user(email);

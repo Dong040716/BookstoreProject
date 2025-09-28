@@ -1,3 +1,4 @@
+// Order.java - 添加缺失的注解和字段
 package com.example.bookstore.entity;
 
 import jakarta.persistence.*;
@@ -18,17 +19,16 @@ public class Order {
     private LocalDateTime orderDate;
     private Double totalPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // 改为EAGER避免延迟加载问题
     @JoinColumn(name = "user_id")
     private User user;
 
-    // 修改为使用 CascadeType.PERSIST 而不是 CascadeType.ALL
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     // 订单状态
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.pending;
 
     // 收货信息
     private String shippingAddress;
@@ -40,9 +40,10 @@ public class Order {
     private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
+    private PaymentStatus paymentStatus = PaymentStatus.pending;
 
-    private LocalDateTime paymentDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public enum OrderStatus {
         pending, processing, completed, cancelled
@@ -53,10 +54,22 @@ public class Order {
     }
 
     public enum PaymentStatus {
-        pending, paid, failed
+        pending, paid, failed, refunded
     }
 
-    // 添加辅助方法以确保双向关联正确设置
+    @PrePersist
+    protected void onCreate() {
+        orderDate = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    // 辅助方法
     public void addOrderItem(OrderItem item) {
         orderItems.add(item);
         item.setOrder(this);
