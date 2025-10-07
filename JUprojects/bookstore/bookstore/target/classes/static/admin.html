@@ -606,6 +606,26 @@
     </div>
 </div>
 
+<!-- 订单详情模态框 -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">订单详情</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="orderDetailContent">
+                    <!-- 订单详情将通过JavaScript动态填充 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Bootstrap & jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -921,6 +941,7 @@
         if (userId) {
             userData.id = userId;
             method = 'PUT';
+            url = `http://localhost:8080/users/${userId}`;
         }
 
         fetch(url, {
@@ -1089,8 +1110,134 @@
 
     // 查看订单详情
     function viewOrderDetails(orderId) {
-        alert('查看订单详情: ' + orderId);
-        // 这里可以跳转到订单详情页面或打开详情模态框
+        // 发送请求获取订单详情
+        fetch(`http://localhost:8080/api/orders/${orderId}`)
+            .then(response => response.json())
+            .then(order => {
+                // 构建订单详情HTML
+                const orderDate = new Date(order.orderDate).toLocaleString();
+                const createdAt = new Date(order.createdAt).toLocaleString();
+                const updatedAt = new Date(order.updatedAt).toLocaleString();
+                
+                let orderDetailHtml = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>订单基本信息</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>订单ID:</strong></td>
+                                    <td>${order.id}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>订单日期:</strong></td>
+                                    <td>${orderDate}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>订单状态:</strong></td>
+                                    <td>${order.status}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>总金额:</strong></td>
+                                    <td>¥${order.totalPrice.toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>创建时间:</strong></td>
+                                    <td>${createdAt}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>更新时间:</strong></td>
+                                    <td>${updatedAt}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>用户信息</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>用户ID:</strong></td>
+                                    <td>${order.user ? order.user.id : 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>用户名:</strong></td>
+                                    <td>${order.user ? order.user.username : 'N/A'}</td>
+                                </tr>
+                            </table>
+                            
+                            <h6>收货信息</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>收货人:</strong></td>
+                                    <td>${order.recipientName || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>联系电话:</strong></td>
+                                    <td>${order.recipientPhone || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>收货地址:</strong></td>
+                                    <td>${order.shippingAddress || 'N/A'}</td>
+                                </tr>
+                            </table>
+                            
+                            <h6>支付信息</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>支付方式:</strong></td>
+                                    <td>${order.paymentMethod || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>支付状态:</strong></td>
+                                    <td>${order.paymentStatus || 'N/A'}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <h6>订单项目</h6>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>书籍名称</th>
+                                <th>单价</th>
+                                <th>数量</th>
+                                <th>小计</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                // 添加订单项
+                if (order.orderItems && order.orderItems.length > 0) {
+                    order.orderItems.forEach(item => {
+                        orderDetailHtml += `
+                            <tr>
+                                <td>${item.book ? item.book.title : '未知书籍'}</td>
+                                <td>¥${item.unitPrice ? item.unitPrice.toFixed(2) : '0.00'}</td>
+                                <td>${item.quantity}</td>
+                                <td>¥${item.subtotal ? item.subtotal.toFixed(2) : '0.00'}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    orderDetailHtml += `<tr><td colspan="4">暂无订单项</td></tr>`;
+                }
+                
+                orderDetailHtml += `
+                        </tbody>
+                    </table>
+                `;
+                
+                // 将构建好的HTML插入到模态框中
+                document.getElementById('orderDetailContent').innerHTML = orderDetailHtml;
+                
+                // 显示模态框
+                const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('获取订单详情失败');
+            });
     }
 
     // 退出登录
